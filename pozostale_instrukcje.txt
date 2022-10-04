@@ -1,0 +1,255 @@
+Pliki wsadowe .bat przydatne komendy
+
+Wykorzystanie RUNDLL32 i komendy przydatne przy tworzeniu plikow wsadowych
+
+Wykorzystanie Rundll32.exe w plikach *.BAT pod Windowsem Pliki *.BAT (pliki wsadowe MS-DOS) dobrze nadają się do wywoływania poleceń przez Rundll32.exe. Standardowo po wstawieniu polecenia z Rundll32.exe do pliku BAT i uruchomieniu go, w oknie DOS pokaże się, do jakiego polecenia się odwołujemy, ale można temu zapobiec. Oto podstawowe polecenia plików skryptów *.BAT:
+
+
+@ECHO OFF - (stosowany w 1 linii pliku) zapobiega wyświetlaniu informacji o tym, co się dzieje, czyli nie pokazuje podczas działania, do jakiego polecenia się odwołujemy. ECHO - wszystko wpisane po tym poleceniu będzie wyświetlana na ekranie, jest to dobre do przekazywania informacji użytkownikowi. REM - to polecenie to komentarz, zapisuje się po nim informacje ważne tylko dla nas (chyba wiecie, do czego dokładnie służą komentarze) UWAGA: Każdego polecenia używa się w innej linii, nigdy dwóch w jednej, bo wtedy tylko pierwsze zostanie wykonane!
+
+
+Co trzeba zrobić, aby utworzyć plik *.BAT: 1. Otwieramy nowy dokument tekstowy w systemowym Notatniku lub innym edytorze tekstu. 2. Wpisujemy:
+
+
+@ECHO OFF TUTAJ POLECENIE RUNDLL32.EXE ECHO Wlasnie wykonalem polecenie Rundll32.exe REM nie uzywaj polskich znakow, bo i tak nie będzie ich widac!!! 3. Zapisujemy plik jako *.BAT
+
+
+Koniec BATowania, gotowy przykład:
+
+
+@ECHO OFF Rundll32.exe shell32.dll,ShellAboutA ECHO Teraz zobacz ile pamieci zuzywasz! REM wywoluje informacje o pamieci i pokazuje ECHO W plikach *.BAT można stosować kilka poleceń Rundll32.exe po kolei. Odpalenie tego pliku spowoduje pokazanie okna informacji o pamięci fizycznej i zasobach oraz okna DOS z napisem: Teraz zobacz ile pamięci zuzywasz!.
+
+
+Wykorzystanie Rundll32.exe w plikach *.VBS pod Windowsem Pliki *.vbs (Visual Basic Script) mogą być wykorzystywane do wywoływania poleceń przez Rundll32.exe w bardzo prosty sposób i na każdym komputerze, w którym jest dostępny Notatnik! A oto, co trzeba zrobić:
+
+
+1. Otwieramy nowy dokument tekstowy w systemowym Notatniku lub innym edytorze tekstu. 2. Wpisujemy (polecenie musi być pomiędzy znakami " i " ):
+
+
+set WshShell = Wscript.CreateObject("Wscript.Shell" ) WshShell.Run ("TUTAJ POLECENIE RUNDLL32.EXE" ) 3. I zapisujemy plik z rozszerzeniem *.vbs
+
+
+Przykład wygląda tak:
+
+
+set WshShell = Wscript.CreateObject("Wscript.Shell" ) WshShell.Run ("Rundll32.exe mouse,disable" ) Odpalenie takiego pliku (z rozszerzeniem *.vbs) spowoduje blokadę myszki.
+
+
+Wykorzystanie Rundll32.exe w skrótach Windows Po prostu na Pulpicie klikasz PPM (prawym przyciskiem myszki) i wybierasz Nowy | Skrót. W oknie, które się pokaże w wierszu poleceń wpisujesz polecenie Rundll32.exe (np. Rundll32.exe shell32.dll,Control_RunDLL main.cpl @0 - wpisujesz polecenie bez żadnych nawiasów etc.) i klikasz Dalej. Teraz wybierasz nazwę dla skrótu i klikasz Zakończ. Skrót będzie miał jako ikonę logo Windows. Po uruchomieniu skrótu polecenie Rundll32.exe zostanie wykonane.
+
+
+Wykorzystanie Rundll32.exe przez okno Uruchom Klikasz pasek Start | Uruchom lub kombinacje klawiszy WIN+R w polu Otwórz: wpisujemy polecenie Rundll32.exe (np. Rundll32.exe shell,shellexecute wpisujesz polecenie bez żadnych nawiasów etc.) i klikamy OK, po czym polecenie zostanie wykonane.
+
+
+Wykorzystanie Rundll32.exe w Delphi Polecenie Rundll32.exe łatwo można wykorzystać w Delphi. W sekcji uses trzeba dodać moduł ShellApi, ponieważ będziemy korzystać z funkcji ShellExecute. Poniżej znajduje się gotowy kod z komentarzem.
+
+
+ShellExecute(Handle, 'open', 'rundll32', 'keyboard, disable', nil, SW_SHOWNORMAL); {otwórz dzięki shellexecute rundll32 i wywołaj polecenie blokady klawiatury}
+
+
+Wyraźnie widać, że tutaj polecenie wpisuje się trochę inaczej, tak jakby dzieli je się na dwa człony pierwszy Rundll (po 'open', pomiędzy znakami ( ' ) i bez rozszerzenia) i drugi keyboard, disable (po 'Rundll32', pomiędzy znakami ( ' )). Tak można wykorzystać każde polecenie Rundll32.exe, trzeba tylko pamiętać o dodaniu ShellApi do sekcji Uses.
+
+
+Wykorzystanie Rundll32.exe do uruchamiania procedur i funkcji zawartych we wszystkich plikach *.DLL W skutek moich doświadczeń prowadzonych nad plikiem Rundll32.exe stwierdziłem, że można dzięki niemu wywołać procedury i funkcje ze wszystkich plików *.DLL Można to zrobić na każdy z wyżej wymienionych sposobów, tak jakby tworząc nowe polecenia. Składnia polecenia wygląda tak:
+
+
+Rundll32.exe (NAZWA PLIKU),(PROCEDURA) Rundll32.exe - przedni człon polecenia. NAZWA PLIKU - nazwa pliku, do którego się odwołujemy z podanym rozszerzeniem oraz jeżeli dany plik nie znajduje się w katalogu WINDOWS, z pełną ścieżką pliku. PROCEDURA - nazwa procedury lub funkcji, która ma zostać wywołana, w przypadku, gdy procedura\funkcja wymaga podania parametru wpisuje się go w nawiasach kwadratowych po spacji od nazwy porcedury\funkcji tak jak np. w (Rundll32.exe user,setcareblinktime [n] - szybkość migania kursora)
+
+
+CZYLI:
+
+
+Rundll32.exe shell,shellexecute, wykonuje procedure SHELLEXECUTE z pliku SHELL.DLL
+
+
+To samo tyczy się wszystkich plików np. *.DLL stworzonych przez nas. Stworzyłem bibliotekę DLL o nazwie test.dll (umieściłem ją na Pulpicie) i umieściłem w niej procedurę losującą liczbę w zakresie 1..100 i pokazującą wynik za pomocą polecenia ShowMessage (z Delphi). Procedurę nazwałem losuj100. Aby wywołać procedurę losuj100 za pomocą Rundll32.exe muszę wywołać polecenie:
+
+
+Rundll32.exe C:\windows\pulpit\test.dll,losuj100 I na ekranie zobaczę losowo wybraną liczbę. Ale i błąd aplikacji Rundll32.exe. Z moich licznych badań wynika, że niektóre procedury, funkcje z parametrem nie chcą się wykonywać, pokazuje się tylko błąd. Reszta działa, ale błąd jest ciągle, nie zauważyłem żadnych zmian związanych z funkcjonowaniem komputera na skutek błędu. Aplikacja Rundll32.exe może potrafi wywoływać procedury i funkcje z plików *.EXE przykładem tego jest: Rundll32.exe krnl386.exe,ExitKernel, ale nie wiem jeszcze jak je wywoływać.
+
+
+KOMENDY
+
+
+rundll32 mouse,disable
+
+Myszy nie da się włączyć, nie ma polecenia enable. Dopiero po ponownym uruchomieniu Windowsa mysz będzie działać. Można to polecenie umieścić w jakimś skrócie, wpisać do Rejestru, bądź wykorzystać w swoim programie.
+
+
+rundll32 keyboard,disable
+
+Klawaitury nie da się włączyć, nie ma polecenia enable. Dopiero po ponownym uruchomieniu Windowsa klawiatura będzie działać. Co ciekawe kombinacja Ctrl+Alt+Delete działa nadal. Można to polecenie umieścić w jakimś skrócie, wpisać do Rejestru, bądź wykorzystać w swoim programie itd. Nie bede tak pisal przeciez przez caly czas, pokaze wam liste parametrow Rundll32 o to i ona:
+
+
+user,exitwindows - zakończenie pracy Windows
+
+user,wnetconnectdialog - okno dialogowe Mapuj Dysk Sieciowy
+
+user,wnetdisconnectdialog - okno dialogowe Odłącz Dysk Sieciowy
+
+user,disableoemlayer - wyłącza grafikę Windows (wygląda jak zawieszenie)
+
+user,enableoemlayer - włącza grafikę Windows
+
+user,repaintscreen - odświeża ekran [F5]
+
+user,setcursorpos - kursor myszki leci w lewy-górny róg
+
+user,tilechildwindows - ustawia okna w rzędzie
+
+user,cascadechildwindows - odwrotność powyższego
+
+user,swapmousebutton - zamienia klawisze myszki
+
+user,setcareblinktime [n] - szybkość migania kursora
+
+user,setdoubleckilcktime [n] - szybkość dwukliku
+
+user.exe,MessageBeep - małe piknięcie
+
+diskcopy,DiskCopyRunDLL - okno dialogowe Kopiuj Dysk
+
+krnl386.exe,ExitKernel - zamknięcie sesji Kernela (bardzo szybkie zamknięcie systemu)
+
+mouse,disable - blokada myszki
+
+keyboard,disable - blokada klawiatury
+
+shell,shellexecute - otwiera okno explorera
+
+shell32,OpenAS_RunDLL - okno dialogowe Otwórz z ...
+
+shell32,SHFormatDrive - okno dialogowe Formatuj
+
+shell32,ShellAboutA - info o pamięci fizycznej i zasobach
+
+shell32,SHexitWindowsEX 0 - wylogowanie z Windowsa (potwierdzenie)
+
+shell32,SHexitWindowsEX 1 - zamyka Windows (potwierdzenie)
+
+shell32,SHexitWindowsEX 2 - restartuje Windows
+
+shell32,SHexitWindowsEX 3 - restartuje powloke Windows
+
+shell32,Control_RunDLL - otwiera Panel Sterowania
+
+shell32,Control_RunDLL desk.cpl - okno właściwości ekranu
+
+shell32,Control_RunDLL main.cpl @0 - okno wlaściwości myszki
+
+shell32,Control_RunDLL main.cpl @1 - okno wlaściwości klawiatury
+
+shell32,Control_RunDLL main.cpl @3 - okno drukarek
+
+shell32,Control_RunDLL powercfg.cpl - właściwości zarządzania energią
+
+shell32,Control_RunDLL sysdm.cpl - okno właściwości systemu
+
+shell32,Control_RunDLL datetime.cpl - okno ustawień daty i czasu
+
+shell32,Control_RunDLL intl.cplv - okno ustawień regionalnych
+
+shell32,Control_RunDLL joy.cpl - okno kontrolerów gry
+
+shell32,Control_RunDLL sticpl.cpl - wlaściwości skanerów
+
+shell32,Control_RunDLL findfast.cpl - okno Find Fastu
+
+
+
+
+Jeszcze o przydatnych poleceniach zawartych w rundll32 które możemy wykorzystać w wirusach .bat:
+
+
+Rundll32
+
+
+Wstęp Witam w moim pierwszym artykule w @t. Artykuł będzie o wykorzystaniu aplikacji Rundll32.exe w Windows (na pewno w 9x, Me, 2000 oraz XP, co do NT to nie wiem, bo nie miałem okazji sprawdzić, ale pewnie tak). Ten temat był już kilka razy poruszany w magazynie, ale teraz przedstawię dosyć obszerną listę poleceń i kilka nowych sposobów na ich wykorzystanie. Dobra, zaczynajmy.
+
+
+Rundll32.exe - jest to aplikacja systemu Windows odpowiadająca za wywoływanie procedur i funkcji z innych bibliotek DLL, plików EXE. Ma ona bardzo duże możliwości, ponieważ pozwala wywoływać procedury i funkcje nawet z plików DLL stworzonych przez nas samych, a w dodatku jest to bardzo łatwe. Więcej o wywoływaniu procedur z naszych plików DLL pod koniec artykułu.
+
+
+Polecenia Rundll32.exe: Rundll32.exe appwiz.cpl,NewLinkHere - otwiera okno Utwórz nowy skrót (tylko XP)
+
+Rundll32.exe desk.cpl,InstallScreenSaver - wygaszacz ekranu
+
+Rundll32.exe diskcopy,DiskCopyRunDLL - okno dialogowe Kopiuj dysk
+
+Rundll32.exe exekrnl386.exe,GlobalrealLoc - przerwanie wszystkich funkcji systemowych
+
+Rundll32.exe keyboard,disable - blokada klawiatury
+
+Rundll32.exe keymgr.dll,KRShowKeyMgr - otwiera okno Przechwytywanie nazwy i hasła użytkownika (tylko XP)
+
+Rundll32.exe krnl386.exe,ExitKernel - zamknięcie sesji kernela (szybkie zamkniecie systemu)
+
+Rundll32.exe krnl386.exe,fatalexit - wyświetla biały ekran Błąd programu
+
+Rundll32.exe krnl386.exe,switchstacko - okno błędu Rundll32 (chyba tylko XP)
+
+Rundll32.exe mouse,disable - blokada myszki
+
+Rundll32.exe msprint2.dll,RUNDLL_PrintTestPage - wydrukowanie strony testowej
+
+Rundll32.exe rnaui.dll,RnaWizard -1 - otwiera kreator połączeń dial-up
+
+Rundll32.exe shell,shellexecute - otwiera okno Eksplorera
+
+Rundll32.exe shell32.dll,Control_RunDLL - otwiera Panel Sterowania
+
+Rundll32.exe shell32.dll,Control_RunDLL datetime.cpl - okno ustawień daty i czasu
+
+Rundll32.exe shell32.dll,Control_RunDLL desk.cpl - okno właściwości ekranu
+
+Rundll32.exe shell32.dll,Control_RunDLL hotplug.dll - otwiera okno Bezpieczne usuwanie sprzętu (tylko XP)
+
+Rundll32.exe shell32.dll,Control_RunDLL joy.cpl - okno kontrolerów gry
+
+Rundll32.exe shell32.dll,Control_RunDLL main.cpl @0 - otwiera okno właściwości myszy
+
+Rundll32.exe shell32.dll,Control_RunDLL main.cpl @1 - otwiera okno właściwości klawiatury
+
+Rundll32.exe shell32.dll,Control_RunDLL main.cpl @2 - otwiera okno właściwości drukarek
+
+Rundll32.exe shell32.dll,Control_RunDLL main.cpl @3 - otwiera okno właściwości czcionek
+
+Rundll32.exe shell32.dll,Control_RunDLL sysdm.cpl - okno właściwości systemu
+
+Rundll32.exe shell32.dll,OpenAs_RunDll - otwiera okno dialogowe Otwórz z...
+
+Rundll32.exe shell32.dll,ShellAboutA - informacja o pamięci fizycznej i zasobach
+
+Rundll32.exe shell32.dll,SHexitWindowsEX 0 - wylogowanie z Windows
+
+Rundll32.exe shell32.dll,SHexitWindowsEX 1 - zamyka Windows
+
+Rundll32.exe shell32.dll,SHexitWindowsEX 2 - restartuje Windows
+
+Rundll32.exe shell32.dll,SHexitWindowsEX 3 - restartuje powłokę Windows
+
+Rundll32.exe shell32.dll,SHFormatDrive - okno dialogowe Formatuj
+
+Rundll32.exe user,cascadechildwindows - odwrotność powyższego
+
+Rundll32.exe user,disableoemlayer - wyłącza grafikę Windows
+
+Rundll32.exe user,enableoemlayer - włącza grafikę Windows
+
+Rundll32.exe user,exitwindows - zakończenie pracy Windows
+
+Rundll32.exe user,repaintscreen - odświeża ekran
+
+Rundll32.exe user,setcaretblinktime [n] - szybkość migania kursora
+
+Rundll32.exe User,setcursorpos - przesuwa kursor w lewy górny róg (pozycja 0, 0)
+
+Rundll32.exe user,setdoubleckilcktime [n] - szybkość dwukrotnego kliknięcia myszką
+
+Rundll32.exe user,swapmousebutton - zamienia klawisze myszki
+
+Rundll32.exe user,tilechildwindows - ustawia okna w rzędzie
+
+Rundll32.exe user,wnetdisconnectdialog - okno dialogowe Odłącz dysk sieciowy
+
+Rundll32.exe user.exe,MessageBeep - odtwarza dźwięk 
